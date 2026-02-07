@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Be My Valentine 💖</title>
+
+<!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
   body {
     margin: 0;
@@ -15,12 +18,10 @@
     font-family: 'Comic Sans MS', cursive, sans-serif;
     text-align: center;
     overflow: hidden;
-    position: relative;
   }
 
-  h1 {
+  h1, h2 {
     color: #fff;
-    margin-bottom: 30px;
     text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
   }
 
@@ -31,30 +32,52 @@
     border-radius: 14px;
     cursor: pointer;
     margin: 0 10px;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease;
   }
 
-  #yesBtn { background-color: #ff4d6d; color: white; }
-  #noBtn { background-color: white; color: #ff4d6d; }
-
-  .heart {
-    position: fixed;
-    pointer-events: none;
-    user-select: none;
-    z-index: 9999;
+  #yesBtn {
+    background-color: #ff4d6d;
+    color: white;
+    z-index: 2;
   }
 
+  #noBtn {
+    background-color: white;
+    color: #ff4d6d;
+  }
+
+  /* GIF animation */
   #valentineGIF {
     max-width: 320px;
     border-radius: 22px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     margin-top: 25px;
-    transform: scale(0.5);
     opacity: 0;
-    transition: transform 1s ease-out, opacity 1s ease-out;
+    transform: scale(0.6);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+
+  /* Floating hearts */
+  .heart {
+    position: fixed;
+    pointer-events: none;
+    font-size: 24px;
+    animation: floatUp 4s linear forwards;
+  }
+
+  @keyframes floatUp {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-120vh);
+      opacity: 0;
+    }
   }
 </style>
 </head>
+
 <body>
 
 <div id="main">
@@ -64,90 +87,86 @@
 </div>
 
 <script>
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-let scale = 1;
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+  let scale = 1;
 
-// NO button runs away
-noBtn.addEventListener("mouseenter", () => {
-  scale += 0.35;
-  yesBtn.style.transform = `scale(${scale})`;
+  // NO button runs away
+  noBtn.addEventListener("mouseenter", () => {
+    scale += 0.35;
+    yesBtn.style.transform = `scale(${scale})`;
 
-  const padding = 20;
-  const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+    const padding = 20;
+    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
 
-  noBtn.style.position = "fixed";
-  noBtn.style.left = Math.random() * maxX + "px";
-  noBtn.style.top = Math.random() * maxY + "px";
+    noBtn.style.position = "fixed";
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top = Math.random() * maxY + "px";
 
-  if (scale > 6) {
-    yesBtn.style.position = "fixed";
-    yesBtn.style.top = "0";
-    yesBtn.style.left = "0";
-    yesBtn.style.width = "100vw";
-    yesBtn.style.height = "100vh";
-    yesBtn.style.fontSize = "60px";
-    yesBtn.style.borderRadius = "0";
-    yesBtn.style.display = "flex";
-    yesBtn.style.alignItems = "center";
-    yesBtn.style.justifyContent = "center";
-  }
-});
-
-noBtn.addEventListener("click", () => {
-  scale += 0.35;
-  yesBtn.style.transform = `scale(${scale})`;
-});
-
-// Floating hearts
-function createHeart() {
-  const heart = document.createElement("div");
-  heart.className = "heart";
-  heart.textContent = "💖";
-  heart.style.left = Math.random() * window.innerWidth + "px";
-  heart.style.top = window.innerHeight + "px";
-  heart.style.fontSize = `${10 + Math.random() * 30}px`;
-  document.body.appendChild(heart);
-
-  const anim = setInterval(() => {
-    const currentTop = parseFloat(heart.style.top);
-    heart.style.top = currentTop - 3 + "px";
-    heart.style.opacity = (currentTop / window.innerHeight).toString();
-    if (currentTop < -50) {
-      clearInterval(anim);
-      heart.remove();
+    if (scale > 6) {
+      yesBtn.style.position = "fixed";
+      yesBtn.style.top = "0";
+      yesBtn.style.left = "0";
+      yesBtn.style.width = "100vw";
+      yesBtn.style.height = "100vh";
+      yesBtn.style.fontSize = "60px";
+      yesBtn.style.borderRadius = "0";
     }
-  }, 20);
-}
+  });
 
-// YES button click
-yesBtn.addEventListener("click", () => {
-  const main = document.getElementById("main");
-  main.innerHTML = `
-    <h1 style="font-size:60px;">THANK YOU FOR CHOOSING ME 💕</h1>
-    <h2 style="font-size:42px;">Trishibear 🧸💖</h2>
-    <img id="valentineGIF" src="https://media.tenor.com/hCquf2xno8UAAAAM/kitten-licks-screen-kitten.gif">
-  `;
+  // Floating hearts
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "💖";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.bottom = "-30px";
+    heart.style.fontSize = 16 + Math.random() * 30 + "px";
+    document.body.appendChild(heart);
 
-  // Animate GIF
-  const gif = document.getElementById("valentineGIF");
-  setTimeout(() => {
-    gif.style.transform = "scale(1)";
-    gif.style.opacity = "1";
-  }, 50);
+    setTimeout(() => heart.remove(), 4000);
+  }
 
-  // Start confetti
-  confetti({ particleCount: 250, spread: 100, origin: { y: 0.6 } });
-  let end = Date.now() + 2500;
-  (function frame() {
-    confetti({ particleCount: 6, spread: 80, origin: { x: Math.random(), y: Math.random() - 0.2 } });
-    if (Date.now() < end) requestAnimationFrame(frame);
-  })();
+  // YES button click
+  yesBtn.addEventListener("click", () => {
+    const main = document.getElementById("main");
+    main.innerHTML = `
+      <h1 style="font-size:60px;">THANK YOU FOR CHOOSING ME 💕</h1>
+      <h2 style="font-size:42px;">Trishibear 🧸💖</h2>
+      <img id="valentineGIF"
+           src="https://media.tenor.com/hCquf2xno8UAAAAM/kitten-licks-screen-kitten.gif">
+    `;
 
-  // Start hearts
-  setInterval(createHeart, 200);
-});
+    const gif = document.getElementById("valentineGIF");
+
+    // Fade & scale GIF in
+    setTimeout(() => {
+      gif.style.opacity = "1";
+      gif.style.transform = "scale(1)";
+    }, 100);
+
+    // Confetti burst
+    confetti({
+      particleCount: 250,
+      spread: 100,
+      origin: { y: 0.6 }
+    });
+
+    // Confetti rain
+    let end = Date.now() + 2500;
+    (function frame() {
+      confetti({
+        particleCount: 6,
+        spread: 80,
+        origin: { x: Math.random(), y: Math.random() - 0.2 }
+      });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+
+    // Hearts
+    setInterval(createHeart, 200);
+  });
 </script>
 
 </body>
